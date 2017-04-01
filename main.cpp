@@ -11,5 +11,10 @@ int main(int argc, char** argv) {
   if(tree.expectWhitespace(ref)) {
     printf("Error\n");
   }
+  tree = ParseTree("5+2");
+  char val;
+  tree.expect(ref,val,'+');
+  
+  printf("-%s-\n",((std::string)ref).data());
   return 0;
 }

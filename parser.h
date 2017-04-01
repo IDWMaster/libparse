@@ -46,7 +46,7 @@ public:
   ///@param out The string
   ///@param found The character which was found
   template<typename... pack>
-  bool expect(pack... expectations, StringRef& out, char& found) {
+  bool expect(StringRef& out, char& found, pack... expectations) {
     const size_t count = sizeof...(pack);
     char value[sizeof...(pack)] = {expectations...};
     out.ptr = ptr;
