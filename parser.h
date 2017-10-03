@@ -13,22 +13,43 @@ namespace libparse {
     operator std::string() const {
       return std::string(ptr,count);
     }
+    bool operator<(const StringRef& other) const {
+      size_t c = other.count < count ? other.count : count;
+      for(size_t i = 0;i<c;i++) {
+	if(ptr[i]<other.ptr[c]) {
+	  return true;
+	}
+      }
+      return false;
+    }
     StringRef() {
       count = 0;
+    }
+    template<typename... pack>
+    bool in(int& match,pack... expectations) {
+      const char* values[sizeof...(pack)] = {expectations...};
+      for(size_t i = 0;i<sizeof...(pack);i++) {
+	const char* ptr = values[i];
+	const char* compare = this->ptr;
+	bool matched = true;
+	for(size_t c = 0;ptr[c];c++ /*This is how C++ was invented*/) {
+	  if((ptr[c] != compare[c]) || c == count) {
+	    matched = false;
+	    break;
+	  }
+	}
+	
+	if(matched) {
+	  match = i;
+	  return true;
+	}
+      }
     }
     StringRef(const char* ptr, size_t count):ptr(ptr),count(count) {
     }
   };
   
   
-  class Node {
-public:
-  StringRef position;
-  Node* parent;
-  Node(const StringRef& position, Node* parent):position(position),parent(parent) {
-    
-  }
-};
 
 class ParseTree {
 public:
@@ -36,6 +57,7 @@ public:
   ParseTree(const char* code) {
     ptr = code;
   }
+  
 #define BEGIN out.ptr = ptr;while(*ptr != 0) {
 #define END ptr++;}return false;
 #define RT out.count = (size_t)(ptr-out.ptr);ptr++;return true;
@@ -62,6 +84,15 @@ public:
     }
     return false;
   }
+  void skipWhitespace() {
+    while(ptr != 0) {
+    if(isspace(*ptr)) {
+      ptr++;
+    }else {
+      return;
+    }
+    }
+  }
   ///@summary Expects whitespace
   ///@param out The string before the whitespace.
   ///@returns Whether or not whitespace was found.
@@ -81,6 +112,14 @@ public:
   bool expect(const F& functor, StringRef& out) {
     BEGIN
       if(functor(*ptr)) {
+	RT
+      }
+    END
+  }
+  template<typename F>
+  bool scan(const F& functor, StringRef& out) {
+    BEGIN
+      if(!functor(*ptr)) {
 	RT
       }
     END
