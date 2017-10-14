@@ -16,7 +16,7 @@ namespace libparse {
     bool operator<(const StringRef& other) const {
       size_t c = other.count < count ? other.count : count;
       for(size_t i = 0;i<c;i++) {
-	if(ptr[i]<other.ptr[c]) {
+	if(ptr[i]<other.ptr[i]) {
 	  return true;
 	}
       }
@@ -62,7 +62,7 @@ public:
   
 #define BEGIN out.ptr = ptr;while(*ptr != 0) {
 #define END ptr++;}return false;
-#define RT out.count = (size_t)(ptr-out.ptr);ptr++;return true;
+#define RT out.count = (size_t)(ptr-out.ptr);return true;
   
   ///@summary Expects a sequence of characters.
   ///@returns TRUE if the specified character was found, otherwise false
