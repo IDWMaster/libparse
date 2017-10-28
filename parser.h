@@ -18,9 +18,13 @@ namespace libparse {
       for(size_t i = 0;i<c;i++) {
 	if(ptr[i]<other.ptr[i]) {
 	  return true;
+	}else {
+	  if(ptr[i]>other.ptr[i]) {
+	    return false;
+	  }
 	}
       }
-      return false;
+      return count < other.count;
     }
     StringRef() {
       count = 0;
