@@ -53,6 +53,9 @@ namespace libparse {
     }
     StringRef(const char* ptr, size_t count):ptr(ptr),count(count) {
     }
+    StringRef(const char* ptr):ptr(ptr) {
+      count = strlen(ptr);
+    }
   };
   
   
